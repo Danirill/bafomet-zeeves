@@ -21,13 +21,14 @@ class ImageSerializer(serializers.ModelSerializer):
 class NFTRequestSerializer(serializers.ModelSerializer):
     result = ImageSerializer(read_only=True, allow_null=True, many=True)
     data = serializers.JSONField(allow_null=True, required=False)
+    owner = serializers.JSONField(allow_null=True, required=False)
 
     class Meta:
         model = NFTRequest
         fields = '__all__'
 
     def create(self, validated_data):
-        IMAGE_COUNT = 1
+        IMAGE_COUNT = 3
         model = self.Meta.model.objects.create(**validated_data)
         model.save()
         for i in range(0, IMAGE_COUNT):

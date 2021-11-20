@@ -1,8 +1,10 @@
+import django_filters
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
 
 # Create your views here.
 from django.views.decorators.csrf import requires_csrf_token
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, generics
 from rest_framework.generics import ListAPIView
 import django_filters.rest_framework as filters
@@ -46,4 +48,15 @@ class NFTCreateView(generics.CreateAPIView):
 class NFTRetrieveView(generics.RetrieveAPIView):
     queryset = NFTRequest.objects.all()
     serializer_class = NFTRequestSerializer
+
+class NFTRequestFilter(django_filters.rest_framework.FilterSet):
+    class Meta:
+        model = NFTRequest
+        fields = ['owner']
+
+class NFTRequestListView(generics.ListAPIView):
+    queryset = NFTRequest.objects.all()
+    serializer_class = NFTRequestSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = NFTRequestFilter
 
