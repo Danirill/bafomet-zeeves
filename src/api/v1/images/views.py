@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 import random
 
 from WellbeApi import settings
-from api.v1.images.models import Image, NFTRequest
+from api.v1.images.models import Image, NFTRequest, BlockedKey
 from api.v1.images.serializers import ImageSerializer, NFTRequestSerializer
 from utils.utils import parse_int
 
@@ -25,6 +25,17 @@ class GetImageById(APIView):
         except:
             return Response({}, status.HTTP_404_NOT_FOUND)
 
+class MintImageById(APIView):
+    def get(self, request, image_id):
+        try:
+            image = Image.objects.get(id=image_id)
+            if image.text:
+                BlockedKey.objects.create(key=image.text)
+                return Response({}, status.HTTP_200_OK)
+        except Image.DoesNotExist:
+            return Response({}, status.HTTP_404_NOT_FOUND)
+        return Response({}, status.HTTP_406_NOT_ACCEPTABLE)
+
 
 class GetImageByUUID(APIView):
     def get(self, request, image_uuid):
@@ -35,14 +46,17 @@ class GetImageByUUID(APIView):
             return Response({}, status.HTTP_404_NOT_FOUND)
 
 
-class NFTCreateView(generics.CreateAPIView):
-    queryset = NFTRequest.objects.all()
-    serializer_class = NFTRequestSerializer
-
-
-# class NFTNativeCreateView(generics.CreateAPIView):
-#     queryset = NFTRequest.objects.all()
-#     serializer_class = NativeNFTRequestSerializer
+class NFTCreateView(APIView):
+    def post(self, request):
+        serializer = NFTRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        key = serializer.validated_data['key']
+        if not BlockedKey.objects.filter(key=key).exists():
+            nft_request = serializer.save()
+            return Response(NFTRequestSerializer(nft_request, context={"request": request}).data,
+                            status.HTTP_201_CREATED)
+        else:
+            return Response({}, status.HTTP_403_FORBIDDEN)
 
 
 class NFTRetrieveView(APIView):

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Image, NFTRequest
+from .models import Image, NFTRequest, BlockedKey
 
 
 class ImageAdmin(admin.ModelAdmin):
@@ -15,3 +15,4 @@ class ImageAdmin(admin.ModelAdmin):
 
 admin.site.register(Image, ImageAdmin)
 admin.site.register(NFTRequest)
+admin.site.register(BlockedKey)

@@ -3,15 +3,23 @@ from datetime import datetime, timedelta, timezone
 from django.db.models import Count
 from rest_framework import serializers
 
-from api.v1.images.models import Image, NFTRequest
+from api.v1.images.models import Image, NFTRequest, BlockedKey
 from api.v1.images.tasks import generate_nft #,generate_nft_native
 
 
 class ImageSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
+    blocked = serializers.SerializerMethodField()
     class Meta:
         model = Image
-        fields = ['id', 'image_url', 'uuid', 'owner', 'text', 'created_at']
+        fields = ['id', 'image_url', 'uuid', 'owner', 'text', 'created_at', 'blocked']
+
+    def get_blocked(self, image):
+        try:
+            BlockedKey.objects.get(key=image.text)
+            return True
+        except BlockedKey.DoesNotExist:
+            return False
 
     def get_image_url(self, image):
         request = self.context.get('request')

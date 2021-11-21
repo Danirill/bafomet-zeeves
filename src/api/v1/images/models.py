@@ -7,6 +7,11 @@ from django.db import models
 from django.utils.safestring import mark_safe
 
 
+class BlockedKey(models.Model):
+    key = models.CharField(max_length=100, unique=True, null=False, blank=False)
+
+    def __str__(self):
+        return f'{self.key}'
 
 
 class Image(models.Model):
@@ -33,7 +38,7 @@ class Image(models.Model):
 
 
 class NFTRequest(models.Model):
-    key = models.CharField(max_length=100, unique=True, null=False, blank=False)
+    key = models.CharField(max_length=100, null=False, blank=False)
     owner = models.CharField(max_length=3000, null=True, blank=True)
     result = models.ManyToManyField(Image, blank=True)
     data = models.JSONField(null=True, blank=True)

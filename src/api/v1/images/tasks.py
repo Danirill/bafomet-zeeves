@@ -39,7 +39,7 @@ def generate_nft(nft_request_id):
         in_memory_file = io.BytesIO(response.content)
         image = Image.objects.create(owner=nft_request.owner, text=nft_request.key)
         image.image.save(
-            get_token(10),
+            f'{get_token(10)}.png',
             File(in_memory_file, 'rb'))
         image.save()
         nft_request.result.add(image)
