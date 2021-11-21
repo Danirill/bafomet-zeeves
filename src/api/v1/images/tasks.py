@@ -46,6 +46,8 @@ def generate_nft(nft_request_id):
         nft_request.save()
         print("SAVING IMAGE!")
     except RemoteDisconnected:
+        nft_request.broken = True
+        nft_request.save()
         pass
     except requests.exceptions.HTTPError as e:
         nft_request.broken = True
