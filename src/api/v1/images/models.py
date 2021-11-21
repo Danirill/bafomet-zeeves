@@ -33,6 +33,9 @@ class NFTRequest(models.Model):
     owner = models.CharField(max_length=3000, null=True, blank=True)
     result = models.ManyToManyField(Image, blank=True)
     data = models.JSONField(null=True, blank=True)
+    broken = models.BooleanField(null=False, default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.key}'

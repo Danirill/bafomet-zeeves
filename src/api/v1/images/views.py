@@ -45,9 +45,23 @@ class NFTCreateView(generics.CreateAPIView):
 #     serializer_class = NativeNFTRequestSerializer
 
 
-class NFTRetrieveView(generics.RetrieveAPIView):
-    queryset = NFTRequest.objects.all()
-    serializer_class = NFTRequestSerializer
+class NFTRetrieveView(APIView):
+    # serializer_class = NFTRequestSerializer
+    def get(self, request, pk):
+        try:
+            nft_request = NFTRequest.objects.get(id=pk)
+        except NFTRequest.DoesNotExist:
+            return Response({}, status.HTTP_404_NOT_FOUND)
+
+        result_count = nft_request.result.count().real
+
+        if result_count >= 3:
+            return Response(NFTRequestSerializer(nft_request, context={"request": request}).data, status.HTTP_200_OK)
+        elif result_count == 0:
+            return Response(NFTRequestSerializer(nft_request, context={"request": request}).data, status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(NFTRequestSerializer(nft_request, context={"request": request}).data, status.HTTP_201_CREATED)
+
 
 class NFTRequestFilter(django_filters.rest_framework.FilterSet):
     class Meta:

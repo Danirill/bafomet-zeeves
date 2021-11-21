@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta, timezone
+
+from django.db.models import Count
 from rest_framework import serializers
 
 from api.v1.images.models import Image, NFTRequest
@@ -28,12 +31,20 @@ class NFTRequestSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        IMAGE_COUNT = 3
+        IMAGE_COUNT = 2
         model = self.Meta.model.objects.create(**validated_data)
         model.save()
-        for i in range(0, IMAGE_COUNT):
-            generate_nft.apply_async(
-                args=[model.id])
+        active_requests = NFTRequest.objects.exclude(broken=True).annotate(images_count=Count('result')).exclude(images_count__gte=IMAGE_COUNT).order_by('-created_at')
+        if active_requests:
+            latest_request = active_requests[0]
+            if datetime.now(timezone.utc) - latest_request.created_at <= timedelta(minutes=10):
+                for i in range(0, IMAGE_COUNT):
+                    generate_nft.apply_async(
+                        args=[model.id], eta=datetime.now(timezone.utc) + (datetime.now(timezone.utc) - latest_request.created_at))
+        else:
+            for i in range(0, IMAGE_COUNT):
+                generate_nft.apply_async(
+                    args=[model.id])
         return model
 
 # class NativeNFTRequestSerializer(serializers.ModelSerializer):

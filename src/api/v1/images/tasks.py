@@ -1,4 +1,5 @@
 import io
+from http.client import RemoteDisconnected
 
 from django.core.files import File
 
@@ -28,11 +29,10 @@ def generate_nft(nft_request_id):
     except NFTRequest.DoesNotExist:
         return
     BASE_URL = Variable.objects.get(key='RUDALLE_URL').value
-    print(type(BASE_URL))
     print(BASE_URL)
     url = f"{BASE_URL}?message={nft_request.key}"
 
-    response = requests.request("GET", url, headers=headers)
+    response = requests.request("GET", url, headers=headers, timeout=60*10)
     try:
         response.raise_for_status()
         print(response)
@@ -44,8 +44,12 @@ def generate_nft(nft_request_id):
         image.save()
         nft_request.result.add(image)
         nft_request.save()
-
+        print("SAVING IMAGE!")
+    except RemoteDisconnected:
+        pass
     except requests.exceptions.HTTPError as e:
+        nft_request.broken = True
+        nft_request.save()
         print(e)
 
 # @app.task
