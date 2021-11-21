@@ -13,7 +13,10 @@ class Image(models.Model):
     image = models.FileField(blank=True, null=True, validators=[FileExtensionValidator(['pdf', 'jpg', 'svg', 'png', 'gif', 'webp'])])
     url = models.URLField(blank=True, null=True)
     owner = models.CharField(max_length=3000, null=True, blank=True)
+    text = models.TextField(null=True, blank=True)
     uuid = models.UUIDField(auto_created=True, editable=True, default=uuid.uuid4, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def thumbnail_preview(self):

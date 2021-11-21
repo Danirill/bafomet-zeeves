@@ -11,7 +11,7 @@ class ImageSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
     class Meta:
         model = Image
-        fields = ['id', 'image_url', 'uuid']
+        fields = ['id', 'image_url', 'uuid', 'owner', 'text', 'created_at']
 
     def get_image_url(self, image):
         request = self.context.get('request')
