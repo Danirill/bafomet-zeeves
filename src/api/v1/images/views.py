@@ -97,7 +97,7 @@ class ImageFilter(django_filters.rest_framework.FilterSet):
 
 
 class ImageFilterListView(generics.ListAPIView):
-    queryset = Image.objects.all()
+    queryset = Image.objects.all().order_by('-created_at')
     serializer_class = ImageSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ImageFilter
