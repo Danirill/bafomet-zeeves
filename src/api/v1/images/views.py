@@ -55,7 +55,7 @@ class NFTRetrieveView(APIView):
 
         result_count = nft_request.result.count().real
 
-        if result_count >= 3:
+        if result_count >= 2:
             return Response(NFTRequestSerializer(nft_request, context={"request": request}).data, status.HTTP_200_OK)
         elif result_count == 0:
             return Response(NFTRequestSerializer(nft_request, context={"request": request}).data, status.HTTP_204_NO_CONTENT)
