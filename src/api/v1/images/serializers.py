@@ -40,11 +40,11 @@ class NFTRequestSerializer(serializers.ModelSerializer):
             if datetime.now(timezone.utc) - latest_request.created_at <= timedelta(minutes=10):
                 for i in range(0, IMAGE_COUNT):
                     generate_nft.apply_async(
-                        args=[model.id], eta=datetime.now(timezone.utc) + (datetime.now(timezone.utc) - latest_request.created_at) + timedelta(minutes=4)*i)
+                        args=[model.id], eta=datetime.now(timezone.utc) + (datetime.now(timezone.utc) - latest_request.created_at) + timedelta(minutes=2, seconds=30)*i)
         else:
             for i in range(0, IMAGE_COUNT):
                 generate_nft.apply_async(
-                    args=[model.id], eta=datetime.now(timezone.utc) + timedelta(minutes=4)*i)
+                    args=[model.id], eta=datetime.now(timezone.utc) + timedelta(minutes=2, seconds=30)*i)
         return model
 
 # class NativeNFTRequestSerializer(serializers.ModelSerializer):

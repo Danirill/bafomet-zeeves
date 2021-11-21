@@ -68,9 +68,23 @@ class NFTRequestFilter(django_filters.rest_framework.FilterSet):
         model = NFTRequest
         fields = ['owner']
 
+
 class NFTRequestListView(generics.ListAPIView):
     queryset = NFTRequest.objects.all()
     serializer_class = NFTRequestSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = NFTRequestFilter
+
+
+class ImageFilter(django_filters.rest_framework.FilterSet):
+    class Meta:
+        model = Image
+        fields = ['owner']
+
+
+class ImageFilterListView(generics.ListAPIView):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ImageFilter
 

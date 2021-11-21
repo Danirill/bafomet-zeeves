@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 class Image(models.Model):
     image = models.FileField(blank=True, null=True, validators=[FileExtensionValidator(['pdf', 'jpg', 'svg', 'png', 'gif', 'webp'])])
     url = models.URLField(blank=True, null=True)
+    owner = models.CharField(max_length=3000, null=True, blank=True)
     uuid = models.UUIDField(auto_created=True, editable=True, default=uuid.uuid4, null=True)
 
     @property
